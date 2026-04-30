@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <android/log.h>
 
-// Enable NEON on ARM64
 #if defined(__ARM_NEON) || defined(__ARM_NEON__)
 #  include <arm_neon.h>
 #  define AMAN_NEON 1
@@ -16,7 +15,6 @@
 
 namespace aman {
 
-// ── Bilinear resize RGBA → RGB float ─────────────────────────────────────────
 void ImageProcessor::bilinearResizeRGBAtoRGB(
     const uint8_t* src, int srcW, int srcH,
     float*         dst, int dstW, int dstH)
@@ -39,13 +37,11 @@ void ImageProcessor::bilinearResizeRGBAtoRGB(
             const float dx = gx - x0;
             const float dx1 = 1.0f - dx;
 
-            // Four corners (RGBA, 4 bytes each)
             const uint8_t* p00 = src + (y0 * srcW + x0) * 4;
             const uint8_t* p01 = src + (y0 * srcW + x1) * 4;
             const uint8_t* p10 = src + (y1 * srcW + x0) * 4;
             const uint8_t* p11 = src + (y1 * srcW + x1) * 4;
 
-            // Bilinear interpolation for R, G, B (skip alpha channel)
             for (int c = 0; c < 3; ++c) {
                 float val = p00[c] * dx1 * dy1
                           + p01[c] * dx  * dy1
@@ -57,11 +53,8 @@ void ImageProcessor::bilinearResizeRGBAtoRGB(
     }
 }
 
-// ── NEON-optimised normalisation pass ────────────────────────────────────────
 #if AMAN_NEON
-static void normaliseFloatBufferNEON(float* data, size_t count) {
-    // data already in [0,1] from bilinear step — centre to [-1, 1]
-    // formula: out = (in - 0.5) * 2.0
+static void shiftToSignedNEON(float* data, size_t count) {
     const float32x4_t half = vdupq_n_f32(0.5f);
     const float32x4_t two  = vdupq_n_f32(2.0f);
     size_t i = 0;
@@ -70,22 +63,20 @@ static void normaliseFloatBufferNEON(float* data, size_t count) {
         v = vmulq_f32(vsubq_f32(v, half), two);
         vst1q_f32(data + i, v);
     }
-    for (; i < count; ++i) {
-        data[i] = (data[i] - 0.5f) * 2.0f;
-    }
+    for (; i < count; ++i) data[i] = (data[i] - 0.5f) * 2.0f;
 }
 #endif
 
-// ── Public API ────────────────────────────────────────────────────────────────
 PreprocessResult ImageProcessor::process(
     const uint8_t* rgba_data,
     int            src_width,
     int            src_height,
-    int            dst_size)
+    int            dst_size,
+    int            normalize_mode)
 {
     PreprocessResult result;
     if (!rgba_data || src_width <= 0 || src_height <= 0 || dst_size <= 0) {
-        LOGE("process: invalid input dimensions %dx%d -> %d", src_width, src_height, dst_size);
+        LOGE("process: invalid input %dx%d -> %d", src_width, src_height, dst_size);
         return result;
     }
 
@@ -99,14 +90,14 @@ PreprocessResult ImageProcessor::process(
         result.tensor_data.data(), dst_size, dst_size
     );
 
-    // Centre-normalise to [-1, 1] (standard for MobileNet / EfficientNet)
+    if (normalize_mode == 0) {
 #if AMAN_NEON
-    normaliseFloatBufferNEON(result.tensor_data.data(), tensor_size);
+        shiftToSignedNEON(result.tensor_data.data(), tensor_size);
 #else
-    for (float& v : result.tensor_data) {
-        v = (v - 0.5f) * 2.0f;
-    }
+        for (float& v : result.tensor_data) v = (v - 0.5f) * 2.0f;
 #endif
+    }
+    // mode 1: already in [0,1] from bilinear step.
 
     result.valid = true;
     return result;
@@ -116,15 +107,12 @@ PreprocessResult ImageProcessor::processAndroidBitmap(
     const uint32_t* argb_pixels,
     int             src_width,
     int             src_height,
-    int             dst_size)
+    int             dst_size,
+    int             normalize_mode)
 {
-    // Android ARGB_8888 memory layout: [A][R][G][B] per pixel (little-endian)
-    // Reinterpret as RGBA for the bilinear resize (swap nothing; same byte order)
     return process(
         reinterpret_cast<const uint8_t*>(argb_pixels),
-        src_width,
-        src_height,
-        dst_size
+        src_width, src_height, dst_size, normalize_mode
     );
 }
 

@@ -5,7 +5,7 @@ A high-performance Android browser with real-time on-device haram/NSFW content b
 ## Features
 
 - **GeckoView** rendering engine with DNS-over-HTTPS (CleanBrowsing Family — forced, non-overridable)
-- **On-device ML** via TensorFlow Lite + C++ JNI: NSFW, face, skin, and gender detection
+- **On-device ML** via TensorFlow Lite + C++ JNI: a single NudeNet 320n YOLOv8 detector covering NSFW, faces (with gender) and skin exposure
 - **NEON SIMD** image preprocessing in C++ for sub-millisecond tensors
 - **GPU delegate** (with NNAPI fallback) for fast inference
 - **Always-on content filtering**: porn/NSFW and skin exposure checks cannot be disabled
@@ -33,7 +33,7 @@ A high-performance Android browser with real-time on-device haram/NSFW content b
 ┌────────────────▼────────────────────────────────────┐
 │  InferenceEngine (Kotlin)                           │
 │  TFLite GPU delegate / NNAPI / CPU                  │
-│  Runs 4 models: NSFW · Face · Skin · Gender         │
+│  Single NudeNet 320n YOLOv8 detector (18 classes)   │
 └────────────────┬────────────────────────────────────┘
                  │ JNI
 ┌────────────────▼────────────────────────────────────┐
@@ -71,20 +71,20 @@ chmod +x scripts/download_models.sh
 ./scripts/download_models.sh
 ```
 
-For the NSFW and gender models that cannot be auto-downloaded, follow the links printed by the script and place the files in `app/src/main/assets/models/`.
+The script downloads the official NudeNet 320n ONNX from
+[notAI-tech/NudeNet](https://github.com/notAI-tech/NudeNet) and converts it
+to TFLite (float32) inside a Python 3.10 Docker image — Docker is therefore
+a build-time prerequisite. The resulting file is placed under
+`app/src/main/assets/models/`.
 
-Required files:
+Required file:
 
-| File                          | Description                                         |
-| ----------------------------- | --------------------------------------------------- |
-| `nsfw_mobilenetv3.tflite`     | NSFW 5-class classifier (MobileNetV3)               |
-| `face_detection_full.tflite`  | MediaPipe BlazeFace full-range (preferred, 192×192) |
-| `face_detection_short.tflite` | MediaPipe BlazeFace short-range (fallback, 128×128) |
-| `skin_classifier.tflite`      | Binary skin / no-skin classifier                    |
-| `gender_mobilenetv3.tflite`   | Preferred binary female / male face classifier      |
-| `model_gender_q.tflite`       | Legacy gender classifier fallback                   |
+| File                  | Description                                                                                                |
+| --------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `nudenet_320n.tflite` | NudeNet 320n YOLOv8 detector — 18 classes (NSFW + FACE_FEMALE/FACE_MALE + skin), input `[1, 3, 320, 320]`. |
 
-The NSFW and skin models expect `[1, 224, 224, 3]` float32 input normalised to **[-1, 1]**. BlazeFace full-range expects `[1, 192, 192, 3]` (short-range fallback: `[1, 128, 128, 3]`). For gender, the app prefers `gender_mobilenetv3.tflite` when it has a valid 2-class output, then falls back to `model_gender_q.tflite`.
+The model expects float32 input normalised to **[0, 1]** in NCHW layout. Output is
+`[1, 22, 2100]` (4 box coordinates + 18 class scores per anchor).
 
 ### 3. Build
 

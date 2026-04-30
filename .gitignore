@@ -11,6 +11,11 @@
 app/src/main/assets/models/*.tflite
 local.properties
 
+# Local model conversion artefacts (large ONNX + intermediate TFLite outputs)
+tools/model_convert/*.onnx
+tools/model_convert/saved/
+tools/model_convert/convert.log
+
 
 # build outputs
 **/build/
