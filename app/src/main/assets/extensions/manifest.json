@@ -1,0 +1,35 @@
+{
+  "manifest_version": 2,
+  "name": "Aman Content Filter",
+  "version": "1.0.0",
+  "description": "Real-time on-device content filtering for Aman browser",
+
+  "permissions": [
+    "nativeMessaging",
+    "storage",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "aman@filter",
+      "strict_min_version": "113.0"
+    }
+  }
+}

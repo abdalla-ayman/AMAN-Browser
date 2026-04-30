@@ -1,0 +1,17 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+*.so
+app/src/main/assets/models/*.tflite
+local.properties
+
+
+# build outputs
+**/build/
+app/build/

@@ -1,0 +1,32 @@
+<!--
+    Adaptive launcher icon foreground (108×108dp viewport, 66dp safe zone
+    centred at 54,54). Brand-green shield with a soft inner cream "eye"
+    disc and a tiny crescent-star — fully contained inside the safe area
+    so square / round / squircle / teardrop masks all render cleanly.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Shield body (#1A8C5B – brand g500) -->
+    <path
+        android:fillColor="#1A8C5B"
+        android:pathData="M37,24 L71,24 Q77,24 77,30 V58 Q72,76 54,84 Q36,76 31,58 V30 Q31,24 37,24 Z" />
+
+    <!-- Inner cream disc -->
+    <path
+        android:fillColor="#F0FAF5"
+        android:pathData="M54,40 m-13,0 a13,13 0 1,0 26,0 a13,13 0 1,0 -26,0 Z" />
+
+    <!-- Eye pupil (deep brand g800) -->
+    <path
+        android:fillColor="#0D4129"
+        android:pathData="M54,40 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 Z" />
+
+    <!-- Crescent + star — kept inside safe zone (y ≥ 22) -->
+    <path
+        android:fillColor="#F0FAF5"
+        android:pathData="M68,30 l0.85,2.6 l2.7,0 l-2.2,1.6 l0.85,2.6 l-2.2,-1.6 l-2.2,1.6 l0.85,-2.6 l-2.2,-1.6 l2.7,0 Z" />
+</vector>

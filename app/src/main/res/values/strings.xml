@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand -->
+    <string name="app_name">أمان Aman</string>
+    <string name="app_name_en" translatable="false">Aman</string>
+
+    <!-- Settings hero -->
+    <string name="settings_hero_title">Lower Your Gaze</string>
+    <string name="settings_hero_subtitle">Configure how Aman protects your eyes and heart while you browse.</string>
+
+    <!-- Home -->
+    <string name="search_hint">Search or type a URL…</string>
+    <string name="btn_go">Go</string>
+
+    <!-- Browser toolbar -->
+    <string name="btn_back">Back</string>
+    <string name="btn_forward">Forward</string>
+    <string name="btn_refresh">Refresh</string>
+    <string name="address_bar_hint">Search or enter URL</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_browser">Browser</string>
+    <string name="nav_apps">Apps</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_stats">Stats</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_master_toggle">Enable Aman Filter</string>
+    <string name="settings_detect_nsfw">Detect NSFW Content</string>
+    <string name="settings_detect_face">Detect Faces</string>
+    <string name="settings_detect_skin">Detect Skin Exposure</string>
+    <string name="settings_blur_intensity">Blur Intensity</string>
+    <string name="settings_blur_low">Low</string>
+    <string name="settings_blur_medium">Medium</string>
+    <string name="settings_blur_high">High</string>
+    <string name="settings_sensitivity">Detection Sensitivity</string>
+    <string name="settings_sensitivity_strict">Strict</string>
+    <string name="settings_sensitivity_balanced">Balanced</string>
+    <string name="settings_sensitivity_relaxed">Relaxed</string>
+    <string name="settings_tap_to_unblur">Tap to Temporarily Unblur</string>
+    <string name="settings_blur_on_load">Blur Images While Checking</string>
+    <string name="settings_blur_on_load_hint">Hide images immediately, then reveal safe ones after classification</string>
+    <string name="settings_gpu">GPU Acceleration</string>
+    <string name="settings_gpu_hint">Uses phone\'s GPU for faster detection</string>
+    <string name="settings_gender_filter">People Blurring</string>
+    <string name="settings_gender_everyone">Everyone</string>
+    <string name="settings_gender_females">Females Only</string>
+    <string name="settings_gender_males">Males Only</string>
+    <string name="settings_gender_nofilter">No people blurring</string>
+    <string name="settings_dns_note">DNS-over-HTTPS is always on (CleanBrowsing Family with Cloudflare backup) and cannot be disabled</string>
+
+    <!-- Stats screen -->
+    <string name="stats_title">Statistics</string>
+    <string name="stats_subtitle">Your protection at a glance.</string>
+    <string name="stats_today">Blurred Today</string>
+    <string name="stats_total">Total Blurred</string>
+    <string name="stats_category_breakdown">Category Breakdown</string>
+    <string name="stats_top_domain">Most Filtered Site</string>
+    <string name="stats_avg_speed">Avg. Detection Speed</string>
+
+    <!-- Settings screen subtitle -->
+    <string name="settings_subtitle">Tune how Aman protects you.</string>
+
+    <!-- VPN blocker overlay -->
+    <string name="vpn_title">VPN Detected</string>
+    <string name="vpn_message">Please disable your VPN to use أمان Aman.\n\nThis app requires a direct connection to enforce safe DNS filtering.</string>
+
+    <!-- Social media shortcuts -->
+    <string name="shortcut_instagram">Instagram</string>
+    <string name="shortcut_youtube">YouTube</string>
+    <string name="shortcut_tiktok">TikTok</string>
+    <string name="shortcut_twitter">Twitter / X</string>
+    <string name="shortcut_facebook">Facebook</string>
+    <string name="shortcut_reddit">Reddit</string>
+
+    <!-- Quick Access -->
+    <string name="home_welcome_title">Welcome to أمان</string>
+    <string name="home_welcome_subtitle">A safe and trusted digital environment.</string>
+    <string name="home_browser_title">Safe Browser</string>
+    <string name="home_browser_subtitle">Browse with peace of mind — advanced content filtering and ad blocking.</string>
+    <string name="home_browser_cta">Start browsing</string>
+    <string name="quick_access_title">Quick Access</string>
+    <string name="protection_active_title">Protection active</string>
+    <string name="protection_active_subtitle">Aman is filtering content as you browse.</string>
+    <string name="quick_access_edit">Edit</string>
+    <string name="quick_access_done">Done</string>
+    <string name="quick_access_add">Add app</string>
+    <string name="quick_access_add_custom">Add a custom site…</string>
+    <string name="quick_access_add_default">Add %1$s</string>
+    <string name="quick_access_pin">Add to home screen</string>
+    <string name="quick_access_remove">Remove</string>
+    <string name="quick_access_remove_title">Remove %1$s?</string>
+    <string name="quick_access_remove_message">Your saved login for this site will stay until you tap "Sign out" inside the app.</string>
+    <string name="quick_access_empty">No Quick Access apps yet. Tap "Edit" to add some.</string>
+    <string name="btn_add">Add</string>
+    <string name="apps_title">Apps</string>
+    <string name="apps_subtitle">Open the browser or jump back into your saved app sessions.</string>
+    <string name="apps_browser_card_title">Aman Browser</string>
+    <string name="apps_browser_card_subtitle">Private, filtered browsing with tabs</string>
+
+    <string name="add_custom_name_hint">Name (e.g. Discord)</string>
+    <string name="add_custom_url_hint">URL (e.g. discord.com)</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">Welcome to أمان</string>
+    <string name="onboarding_subtitle">Pick the apps you want to use. Each one opens in its own app-like window with its own login. You can add or remove apps any time.</string>
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_skip">Skip</string>
+
+    <!-- Web app overflow menu -->
+    <string name="webapp_menu_title">App menu</string>
+    <string name="webapp_menu_refresh">Refresh</string>
+    <string name="webapp_menu_home">Go to app home</string>
+    <string name="webapp_menu_pin">Add to home screen</string>
+    <string name="webapp_menu_open_browser">Open in browser</string>
+    <string name="webapp_menu_clear_login">Sign out / clear data</string>
+    <string name="webapp_logged_out">Signed out of this app</string>
+</resources>

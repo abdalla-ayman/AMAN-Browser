@@ -1,0 +1,28 @@
+<svg width="100%" viewBox="0 0 680 285" role="img" xmlns="http://www.w3.org/2000/svg" style=""><defs><mask id="imagine-text-gaps-38buoo" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="680" height="285" fill="white"/><rect x="298.0703125" y="174" width="83.859375" height="82" fill="black" rx="2"/><rect x="260.15625" y="244" width="159.6875" height="16" fill="black" rx="2"/></mask></defs>
+  <title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">أمان – Aman Browser logo</title>
+  <desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">Minimal Islamic-green shield with white crescent moon and star, Arabic text أمان and subtitle Aman Browser</desc>
+  
+
+  <!-- Shield body -->
+  <path fill="#1B7948" d="M308,44H372Q384,44 384,56V118Q374,148 340,166Q306,148 296,118V56Q296,44 308,44Z" style="fill:rgb(27, 121, 72);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Shield inner edge highlight -->
+  <path fill="none" stroke="white" stroke-width="1" opacity="0.15" d="M313,51H367Q378,51 378,61V115Q369,142 340,158Q311,142 302,115V61Q302,51 313,51Z" style="fill:none;stroke:rgb(255, 255, 255);color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.15;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Crescent: white base circle -->
+  <circle cx="340" cy="104" r="27" fill="white" opacity="0.92" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.92;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Crescent: green cutout shifted left to open crescent to the right -->
+  <circle cx="327" cy="100" r="22" fill="#1B7948" style="fill:rgb(27, 121, 72);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- 5-pointed star (upper right of crescent) -->
+  <polygon fill="white" opacity="0.92" points="364,76 365.4,80.1 369.7,80.2 366.3,82.8 367.6,87 363.9,84.4 360.2,87 361.5,82.8 358.1,80.2 362.4,80.1" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.92;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Divider line -->
+  <line x1="300" y1="185" x2="380" y2="185" stroke="#1B7948" stroke-width="0.8" opacity="0.35" mask="url(#imagine-text-gaps-38buoo)" style="fill:rgb(0, 0, 0);stroke:rgb(27, 121, 72);color:rgb(0, 0, 0);stroke-width:0.8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.35;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Arabic text أمان -->
+  <text x="340" y="225" text-anchor="middle" font-size="46" font-weight="700" style="fill:rgb(27, 121, 72);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Noto Naskh Arabic&quot;, &quot;Arabic Typesetting&quot;, &quot;Traditional Arabic&quot;, serif;font-size:46px;font-weight:700;text-anchor:middle;dominant-baseline:auto">أمان</text>
+
+  <!-- English subtitle -->
+  <text x="340" y="256" text-anchor="middle" font-size="11" style="fill:rgb(136, 135, 128);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:sans-serif;font-size:11px;font-weight:400;text-anchor:middle;dominant-baseline:auto">AMAN  BROWSER</text>
+</svg>

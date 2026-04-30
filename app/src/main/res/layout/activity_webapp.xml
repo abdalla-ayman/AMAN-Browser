@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/black">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- The site renders edge-to-edge, just like a native app -->
+        <org.mozilla.geckoview.GeckoView
+            android:id="@+id/gecko_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Slim load progress on top -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="0"
+            android:visibility="gone"
+            app:trackCornerRadius="0dp" />
+
+        <!-- A tiny floating handle, positioned bottom-end, for the in-app menu.
+             Long-press or tap opens refresh / pin-to-launcher / open-in-browser. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/menu_handle"
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="12dp"
+            android:alpha="0.55"
+            android:contentDescription="@string/webapp_menu_title"
+            app:icon="@drawable/ic_settings"
+            app:iconSize="20dp" />
+
+    </FrameLayout>
+
+    <!-- Persistent Aman bottom nav so user can jump back to Home/Browser/Stats/Settings
+         even while inside a Quick Access webapp like YouTube. -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/md_theme_surfaceContainerLowest"
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"
+        app:itemActiveIndicatorStyle="@style/Widget.Aman.BottomNav.ActiveIndicator"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:itemTextColor="@color/bottom_nav_item_color"
+        style="@style/Widget.Material3.BottomNavigationView" />
+
+</LinearLayout>

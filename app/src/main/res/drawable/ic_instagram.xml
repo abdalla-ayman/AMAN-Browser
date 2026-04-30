@@ -1,0 +1,16 @@
+<!-- Instagram: rounded square gradient placeholder -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp"
+    android:height="36dp"
+    android:viewportWidth="36"
+    android:viewportHeight="36">
+    <!-- Background rounded square -->
+    <path android:fillColor="#E1306C"
+        android:pathData="M6,0h24c3.3,0 6,2.7 6,6v24c0,3.3-2.7,6-6,6H6c-3.3,0-6-2.7-6-6V6C0,2.7 2.7,0 6,0z"/>
+    <!-- Camera circle outline -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M18,10.5c-4.1,0-7.5,3.4-7.5,7.5s3.4,7.5 7.5,7.5 7.5-3.4 7.5-7.5-3.4-7.5-7.5-7.5zM18,23c-2.8,0-5-2.2-5-5s2.2-5 5-5 5,2.2 5,5-2.2,5-5,5z"/>
+    <!-- dot at (26.5,9.5) r=1.5 -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M26.5,8 A1.5,1.5 0 1,1 26.49,8 Z"/>
+</vector>

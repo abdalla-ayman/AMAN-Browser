@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand -->
+    <string name="app_name">أمان</string>
+
+    <!-- Settings hero -->
+    <string name="settings_hero_title">غضّ البصر</string>
+    <string name="settings_hero_subtitle">اضبط كيف يحمي أمان عينيك وقلبك أثناء التصفح.</string>
+
+    <!-- Home / shared -->
+    <string name="search_hint">ابحث أو اكتب رابطاً…</string>
+    <string name="btn_go">انتقال</string>
+
+    <!-- Browser toolbar -->
+    <string name="btn_back">رجوع</string>
+    <string name="btn_forward">تقدم</string>
+    <string name="btn_refresh">تحديث</string>
+    <string name="address_bar_hint">ابحث أو أدخل رابطاً</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_browser">المتصفح</string>
+    <string name="nav_apps">التطبيقات</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="nav_stats">الإحصاءات</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_subtitle">اضبط كيف يحميك أمان.</string>
+    <string name="settings_master_toggle">تفعيل فلتر أمان</string>
+    <string name="settings_detect_nsfw">كشف المحتوى غير اللائق</string>
+    <string name="settings_detect_face">كشف الوجوه</string>
+    <string name="settings_detect_skin">كشف ظهور البشرة</string>
+    <string name="settings_blur_intensity">شدة التمويه</string>
+    <string name="settings_blur_low">منخفضة</string>
+    <string name="settings_blur_medium">متوسطة</string>
+    <string name="settings_blur_high">عالية</string>
+    <string name="settings_sensitivity">حساسية الكشف</string>
+    <string name="settings_sensitivity_strict">صارمة</string>
+    <string name="settings_sensitivity_balanced">متوازنة</string>
+    <string name="settings_sensitivity_relaxed">متساهلة</string>
+    <string name="settings_tap_to_unblur">اضغط لإزالة التمويه مؤقتاً</string>
+    <string name="settings_blur_on_load">تمويه الصور أثناء الفحص</string>
+    <string name="settings_blur_on_load_hint">إخفاء الصور فوراً ثم إظهار الآمن منها بعد التصنيف</string>
+    <string name="settings_gpu">تسريع المعالج الرسومي</string>
+    <string name="settings_gpu_hint">استخدام معالج الجهاز الرسومي لتسريع الكشف</string>
+    <string name="settings_gender_filter">تمويه الأشخاص</string>
+    <string name="settings_gender_everyone">الجميع</string>
+    <string name="settings_gender_females">النساء فقط</string>
+    <string name="settings_gender_males">الرجال فقط</string>
+    <string name="settings_gender_nofilter">بدون تمويه الأشخاص</string>
+    <string name="settings_dns_note">خدمة DNS-over-HTTPS مفعّلة دائماً (CleanBrowsing Family مع Cloudflare احتياطياً) ولا يمكن إيقافها</string>
+
+    <!-- Stats screen -->
+    <string name="stats_title">الإحصاءات</string>
+    <string name="stats_subtitle">حمايتك في لمحة واحدة.</string>
+    <string name="stats_today">المموَّه اليوم</string>
+    <string name="stats_total">إجمالي ما تم تمويهه</string>
+    <string name="stats_category_breakdown">توزيع الفئات</string>
+    <string name="stats_top_domain">أكثر موقع تمت فلترته</string>
+    <string name="stats_avg_speed">متوسط سرعة الكشف</string>
+
+    <!-- VPN blocker overlay -->
+    <string name="vpn_title">تم اكتشاف VPN</string>
+    <string name="vpn_message">يرجى إيقاف الـ VPN لاستخدام أمان.\n\nيحتاج التطبيق إلى اتصال مباشر لتطبيق فلترة DNS الآمنة.</string>
+
+    <!-- Social media shortcuts -->
+    <string name="shortcut_instagram">إنستغرام</string>
+    <string name="shortcut_youtube">يوتيوب</string>
+    <string name="shortcut_tiktok">تيك توك</string>
+    <string name="shortcut_twitter">إكس / تويتر</string>
+    <string name="shortcut_facebook">فيسبوك</string>
+    <string name="shortcut_reddit">ريديت</string>
+
+    <!-- Home / Quick Access -->
+    <string name="home_welcome_title">أهلاً بك في أمان</string>
+    <string name="home_welcome_subtitle">بيئة رقمية آمنة وموثوقة.</string>
+    <string name="home_browser_title">المتصفح الآمن</string>
+    <string name="home_browser_subtitle">تصفّح بسلام مع فلترة المحتوى المتقدمة وحجب الإعلانات.</string>
+    <string name="home_browser_cta">ابدأ التصفح</string>
+    <string name="protection_active_title">حماية نشطة</string>
+    <string name="protection_active_subtitle">أمان يفلتر المحتوى أثناء تصفّحك.</string>
+    <string name="quick_access_title">الوصول السريع</string>
+    <string name="quick_access_edit">تعديل</string>
+    <string name="quick_access_done">تم</string>
+    <string name="quick_access_add">إضافة تطبيق</string>
+    <string name="quick_access_add_custom">إضافة موقع مخصّص…</string>
+    <string name="quick_access_add_default">إضافة %1$s</string>
+    <string name="quick_access_pin">إضافة إلى الشاشة الرئيسية</string>
+    <string name="quick_access_remove">إزالة</string>
+    <string name="quick_access_remove_title">إزالة %1$s؟</string>
+    <string name="quick_access_remove_message">سيظل تسجيل دخولك المحفوظ لهذا الموقع موجوداً حتى تضغط "تسجيل الخروج" من داخل التطبيق.</string>
+    <string name="quick_access_empty">لا توجد تطبيقات في الوصول السريع. اضغط "تعديل" لإضافة بعضها.</string>
+    <string name="btn_add">إضافة</string>
+
+    <!-- Apps tab -->
+    <string name="apps_title">التطبيقات</string>
+    <string name="apps_subtitle">افتح المتصفح أو عُد إلى جلسات تطبيقاتك المحفوظة.</string>
+    <string name="apps_browser_card_title">متصفح أمان</string>
+    <string name="apps_browser_card_subtitle">تصفّح خاص ومفلتر مع علامات تبويب</string>
+
+    <!-- Custom site dialog -->
+    <string name="add_custom_name_hint">الاسم (مثلاً: ديسكورد)</string>
+    <string name="add_custom_url_hint">الرابط (مثلاً: discord.com)</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">مرحباً بك في أمان</string>
+    <string name="onboarding_subtitle">اختر التطبيقات التي تريد استخدامها. كل تطبيق يفتح في نافذة مستقلة بحساب منفصل، ويمكنك الإضافة أو الإزالة في أي وقت.</string>
+    <string name="onboarding_continue">متابعة</string>
+    <string name="onboarding_skip">تخطّي</string>
+
+    <!-- Web app overflow menu -->
+    <string name="webapp_menu_title">قائمة التطبيق</string>
+    <string name="webapp_menu_refresh">تحديث</string>
+    <string name="webapp_menu_home">الذهاب إلى صفحة التطبيق الرئيسية</string>
+    <string name="webapp_menu_pin">إضافة إلى الشاشة الرئيسية</string>
+    <string name="webapp_menu_open_browser">فتح في المتصفح</string>
+    <string name="webapp_menu_clear_login">تسجيل الخروج / مسح البيانات</string>
+    <string name="webapp_logged_out">تم تسجيل الخروج من هذا التطبيق</string>
+</resources>

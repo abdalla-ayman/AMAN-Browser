@@ -1,0 +1,11 @@
+<!-- Facebook: blue background with f -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp"
+    android:height="36dp"
+    android:viewportWidth="36"
+    android:viewportHeight="36">
+    <path android:fillColor="#1877F2"
+        android:pathData="M6,0h24c3.3,0 6,2.7 6,6v24c0,3.3-2.7,6-6,6H6c-3.3,0-6-2.7-6-6V6C0,2.7 2.7,0 6,0z"/>
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M20.5,8h-2.8c-2.5,0-4.2,1.7-4.2,4.4v2.1H11v3.5h2.5V28h3.6V18h2.4l0.4-3.5h-2.8v-1.8c0-1 0.3-1.7 1.8-1.7h1.6V8z"/>
+</vector>

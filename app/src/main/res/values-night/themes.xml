@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark night theme — mirrors the Compose `DarkColors` mint palette. -->
+    <style name="Theme.Aman" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">#7DE0AF</item>
+        <item name="colorOnPrimary">#003820</item>
+        <item name="colorPrimaryContainer">#0F4A30</item>
+        <item name="colorOnPrimaryContainer">#C6EDD8</item>
+        <item name="colorSecondary">#B8D6C2</item>
+        <item name="colorOnSecondary">#203529</item>
+        <item name="colorSecondaryContainer">#1F3A2C</item>
+        <item name="colorOnSecondaryContainer">#D3EFDF</item>
+        <item name="colorError">#FFB4AB</item>
+        <item name="colorOnError">#690005</item>
+        <item name="android:colorBackground">#0B0F0D</item>
+        <item name="colorOnBackground">#E2ECE6</item>
+        <item name="colorSurface">#111613</item>
+        <item name="colorOnSurface">#E2ECE6</item>
+        <item name="colorSurfaceVariant">#1A201C</item>
+        <item name="colorOnSurfaceVariant">#B8C8BE</item>
+        <item name="colorOutline">#38423C</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
+
