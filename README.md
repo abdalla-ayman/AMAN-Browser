@@ -258,6 +258,7 @@ All active TFLite assets are present in `app/src/main/assets/models/` and were s
 | `face_detection_short.tflite` | MediaPipe BlazeFace short-range (fallback, 128×128, 896 anchors)    | ✅ Working |
 | `skin_classifier.tflite`      | Binary skin / no-skin classifier                                    | ✅ Working |
 | `model_gender_q.tflite`       | Binary male / female face classifier                                | ✅ Working |
+| `nudenet_320n_nms.tflite`     | NudeNet 320n YOLOv8 detector with built-in NMS — 18 classes, input `[1, 320, 320, 3]` NHWC, output: boxes/scores/classes/count | ✅ Working |
 
 `gender_mobilenetv3.tflite` is also present for experimentation, but the app currently loads `model_gender_q.tflite` for gender filtering.
 
@@ -404,3 +405,55 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 | Image blurring (domain mode)     | ✅ Working | Reddit/Twitter/Instagram etc. blurred instantly              |
 | Image blurring (canvas fallback) | ✅ Working | Skin-pixel detection for all other sites                     |
 | Image blurring (ML / native)     | ✅ Working | Models load, match expected tensor shapes, and run inference |
+
+---
+
+## Dev Log — Session Notes (May 1, 2026)
+
+### What Was Done ✅
+
+#### 1. NudeNet 320n → MediaPipe TFLite Conversion (`nudenet_320n_nms.tflite`)
+
+**Goal:** Convert `tools/model_convert/320n_sim.onnx` (YOLOv8n, opset-15, NCHW) into a MediaPipe-compatible TFLite with packed metadata.
+
+**Pipeline (fully automated via Docker):**
+
+```
+320n_sim.onnx
+  → bake static [1,3,320,320] dims + shape inference
+  → manual opset-15→12 patch (Unsqueeze/Split axes: input→attribute, Shape: remove start/end attrs)
+  → monkey-patch onnx.checker to bypass Resize empty-roi validation
+  → onnx-tf export → TF SavedModel
+  → NMS wrapper (tf.image.combined_non_max_suppression) with NHWC→NCHW transpose
+  → TFLiteConverter with SELECT_TF_OPS → raw TFLite (3119 KB)
+  → tflite-support MetadataWriter.create_for_inference() → nudenet_320n_nms.tflite (3121 KB)
+```
+
+**Key issues resolved:**
+
+| Problem | Fix |
+|---|---|
+| `onnx2tf` broken for 3D NCW detection head | Switched to `onnx-tf` backend |
+| `Unsqueeze version 13 not implemented` | Manual patch: axes input→attribute |
+| `onnx.version_converter` fails on Shape-15 | Manual node patching (no version_converter) |
+| `Split` opset-13 second input | Patched to attribute |
+| Resize empty roi fails checker | Monkey-patch `onnx.checker.check_model` to no-op |
+| NHWC/NCHW shape mismatch in NMS wrapper | `tf.transpose(image, [0,3,1,2])` before inference call |
+| `libusb-1.0.so.0` missing for tflite-support | `apt-get install -y libusb-1.0-0` in Docker command |
+| `metadata_writer` module not found in tflite-support 0.4.3 | Use `object_detector.MetadataWriter.create_for_inference()` instead |
+| `populate()` too-many-values unpack error | `populate()` returns a `bytearray` directly, not a tuple |
+
+**Output:** `app/src/main/assets/models/nudenet_320n_nms.tflite` (3.1 MB)
+
+**Conversion script:** `scripts/nudenet_to_mediapipe.py`
+
+**Reproduce with:**
+```bash
+docker run --rm \
+  -v nudenet_pip_cache:/root/.cache/pip \
+  -v /path/to/aman:/workspace \
+  tensorflow/tensorflow:2.13.0 bash -c \
+  "apt-get update -qq && apt-get install -y -q libusb-1.0-0 \
+   && pip install -q onnx onnxruntime tensorflow-probability onnx-tf tflite-support \
+   && python3 /workspace/scripts/nudenet_to_mediapipe.py"
+```
