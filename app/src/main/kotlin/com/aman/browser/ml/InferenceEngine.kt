@@ -19,25 +19,51 @@ import java.nio.channels.FileChannel
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.math.max
-import kotlin.math.min
 
 /**
- * NudeNet 320n single-model inference engine.
+ * NudeNet 320n inference engine — unified entry point for all call sites.
  *
- * Loads `models/nudenet_320n.tflite` (YOLOv8n, 18 classes including
- * FACE_FEMALE / FACE_MALE) and replaces the previous 4-model stack
- * (NSFW, BlazeFace, skin, gender).
+ * **Primary path (MediaPipe)** — when `models/nudenet_320n_nms.tflite` is
+ * present in assets, [NudeNetDetector] is used.  MediaPipe Tasks handles GPU /
+ * NNAPI delegate selection, async threading, and tensor buffer lifecycle.
  *
- * Public API is preserved: [classifyStream], [initialize], [destroy].
+ * **Fallback path (raw TFLite)** — if the converted model is absent, the engine
+ * loads `models/nudenet_320n.tflite` directly via the TFLite Interpreter with
+ * C++ NMS (decodeAndNms JNI).  This path is identical to the previous engine.
+ *
+ * No call-site changes are required in [WebExtensionManager], [AmanApplication],
+ * or [SettingsFragment] — they all call [InferenceEngine.get] as before.
  */
 class InferenceEngine private constructor(private val context: Context) {
 
-    // Native preprocessing — implemented in cpp/src/inference_engine.cpp
+    // ── MediaPipe delegate (primary, when converted model is present) ─────────
+    @Volatile private var mpDetector: NudeNetDetector? = null
+
+    // ── Native functions (implemented in cpp/src/inference_engine.cpp) ──────
     private external fun preprocessRgba(
         rgba: ByteArray, srcW: Int, srcH: Int, dstSize: Int, mode: Int
     ): FloatArray?
     private external fun preprocessBitmap(
         bitmap: Bitmap, dstSize: Int, mode: Int
+    ): FloatArray?
+
+    /**
+     * Decode raw YOLOv8 float output and run per-class greedy NMS in C++.
+     *
+     * Returns [count, cls0, score0, left0, top0, right0, bottom0, …] with
+     * box coordinates normalised to [0, 1].  Returns a single-element array
+     * [0f] when no detections survive the thresholds.
+     */
+    private external fun decodeAndNms(
+        rawOutput:       FloatArray,
+        numAnchors:      Int,
+        numAttrs:        Int,
+        numClasses:      Int,
+        attrsFirst:      Boolean,
+        scoreThreshold:  Float,
+        iouThreshold:    Float,
+        inputW:          Int,
+        inputH:          Int,
     ): FloatArray?
 
     private val lock = ReentrantLock()
@@ -59,6 +85,19 @@ class InferenceEngine private constructor(private val context: Context) {
     private var outputBuffer: ByteBuffer? = null
 
     fun initialize(useGpu: Boolean, useNnapi: Boolean) {
+        // ── Try MediaPipe path first ──────────────────────────────────────────
+        if (mpDetector == null && NudeNetDetector.isAvailable(context)) {
+            try {
+                mpDetector = NudeNetDetector.create(context, useGpu)
+                Log.i(TAG, "MediaPipe NudeNetDetector active (primary path)")
+            } catch (e: Exception) {
+                Log.w(TAG, "MediaPipe init failed — falling back to raw TFLite", e)
+                mpDetector = null
+            }
+        }
+        if (mpDetector != null) return  // MediaPipe is up; no need to load TFLite interpreter
+
+        // ── Fallback: raw TFLite interpreter + C++ NMS ────────────────────────
         lock.withLock {
             if (interpreter != null) return
             try {
@@ -105,8 +144,9 @@ class InferenceEngine private constructor(private val context: Context) {
                 val outElems = outShape.fold(1) { a, b -> a * b }
                 outputBuffer = ByteBuffer.allocateDirect(outElems * 4).order(ByteOrder.nativeOrder())
 
-                Log.i(TAG, "NudeNet ready: in=${inShape.toList()} (CF=$inputChannelsFirst) " +
-                        "out=${outShape.toList()} (attrFirst=$outputAttrFirst, A=$numAnchors)")
+                Log.i(TAG, "NudeNet TFLite fallback ready: in=${inShape.toList()} " +
+                        "(CF=$inputChannelsFirst) out=${outShape.toList()} " +
+                        "(attrFirst=$outputAttrFirst, A=$numAnchors)")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to load NudeNet model", e)
                 destroyLocked()
@@ -114,7 +154,11 @@ class InferenceEngine private constructor(private val context: Context) {
         }
     }
 
-    fun destroy() = lock.withLock { destroyLocked() }
+    fun destroy() {
+        try { mpDetector?.close() } catch (_: Exception) {}
+        mpDetector = null
+        lock.withLock { destroyLocked() }
+    }
 
     private fun destroyLocked() {
         try { interpreter?.close() } catch (_: Exception) {}
@@ -158,6 +202,13 @@ class InferenceEngine private constructor(private val context: Context) {
         genderFilter: Int,
         nsfwThreshold: Float,
     ): DetectionResult {
+        // ── Primary: delegate to MediaPipe if the converted model is loaded ──
+        mpDetector?.let { mp ->
+            return mp.classify(bitmap, checkNsfw, checkFace, checkSkin,
+                               genderFilter, nsfwThreshold)
+        }
+
+        // ── Fallback: raw TFLite interpreter + C++ NMS ──────────────────────
         val itp = interpreter ?: return DetectionResult.SAFE
         val t0 = System.currentTimeMillis()
 
@@ -172,133 +223,63 @@ class InferenceEngine private constructor(private val context: Context) {
         }
         if (src !== bitmap) try { src.recycle() } catch (_: Exception) {}
 
-        val detections = lock.withLock {
-            val ib = inputBuffer ?: return DetectionResult.SAFE
+        // ── Run TFLite inference (lock guards shared buffers + interpreter) ──
+        val rawOutput: FloatArray = lock.withLock {
+            val ib = inputBuffer  ?: return DetectionResult.SAFE
             val ob = outputBuffer ?: return DetectionResult.SAFE
             ib.rewind()
             if (inputChannelsFirst) {
-                // tensor is HWC; convert to CHW
+                // tensor is HWC; re-pack to CHW
                 val hw = inputH * inputW
                 for (c in 0 until 3) {
                     var i = c
                     var n = 0
-                    while (n < hw) {
-                        ib.putFloat(tensor[i])
-                        i += 3; n++
-                    }
+                    while (n < hw) { ib.putFloat(tensor[i]); i += 3; n++ }
                 }
             } else {
                 for (v in tensor) ib.putFloat(v)
             }
-            ib.rewind()
-            ob.rewind()
+            ib.rewind(); ob.rewind()
             try {
                 itp.run(ib, ob)
             } catch (e: Exception) {
                 Log.e(TAG, "Interpreter run failed", e)
                 return DetectionResult.SAFE
             }
+            // Copy raw floats out before releasing the lock — NMS runs outside.
             ob.rewind()
-            decodeYolov8(ob)
+            FloatArray(ob.capacity() / 4).also { ob.asFloatBuffer().get(it) }
         }
 
+        // ── Decode + NMS entirely in C++ (zero JVM allocation for filtering) ──
+        val attrs  = 4 + numClasses
+        val nmsOut = decodeAndNms(
+            rawOutput, numAnchors, attrs, numClasses,
+            outputAttrFirst, SCORE_THRESHOLD, IOU_THRESHOLD, inputW, inputH,
+        ) ?: return DetectionResult.SAFE
+
         val elapsed = System.currentTimeMillis() - t0
+        val count   = nmsOut[0].toInt()
+        val detections = ArrayList<Detection>(count)
+        for (i in 0 until count) {
+            val base   = 1 + i * 6
+            val clsIdx = nmsOut[base].toInt()
+            detections.add(Detection(
+                classIndex = clsIdx,
+                className  = NudeNetClasses.NAMES.getOrElse(clsIdx) { "C$clsIdx" },
+                score      = nmsOut[base + 1],
+                box        = RectF(nmsOut[base + 2], nmsOut[base + 3],
+                                   nmsOut[base + 4], nmsOut[base + 5]),
+            ))
+        }
         return aggregate(detections, checkNsfw, checkFace, checkSkin, genderFilter, nsfwThreshold, elapsed)
     }
 
-    /** Decode YOLOv8 raw output → list of detections. */
-    private fun decodeYolov8(out: ByteBuffer): List<Detection> {
-        val anchors = numAnchors
-        if (anchors <= 0) return emptyList()
-        val nc = numClasses
-        val attrs = 4 + nc
-        // Threshold & NMS
-        val perClassDet = ArrayList<Detection>(32)
-
-        // Read all floats once
-        val floats = FloatArray(anchors * attrs)
-        out.asFloatBuffer().get(floats)
-
-        // Index helpers based on layout
-        // outputAttrFirst (true): floats are laid out [attr][anchor] (row-major)
-        //   value(attr, a) = floats[attr * anchors + a]
-        // else                     : floats are [anchor][attr]
-        //   value(attr, a) = floats[a * attrs + attr]
-        fun v(attr: Int, a: Int): Float =
-            if (outputAttrFirst) floats[attr * anchors + a]
-            else floats[a * attrs + attr]
-
-        for (a in 0 until anchors) {
-            // Find best class
-            var bestC = 0
-            var bestScore = v(4, a)
-            for (c in 1 until nc) {
-                val s = v(4 + c, a)
-                if (s > bestScore) { bestScore = s; bestC = c }
-            }
-            if (bestScore < SCORE_THRESHOLD) continue
-
-            val cx = v(0, a)
-            val cy = v(1, a)
-            val w  = v(2, a)
-            val h  = v(3, a)
-
-            // Coordinates are in input-pixel space (0..inputW). Normalise to [0,1].
-            val nx = cx / inputW.toFloat()
-            val ny = cy / inputH.toFloat()
-            val nw = w  / inputW.toFloat()
-            val nh = h  / inputH.toFloat()
-
-            val left   = (nx - nw / 2f).coerceIn(0f, 1f)
-            val top    = (ny - nh / 2f).coerceIn(0f, 1f)
-            val right  = (nx + nw / 2f).coerceIn(0f, 1f)
-            val bottom = (ny + nh / 2f).coerceIn(0f, 1f)
-
-            perClassDet.add(
-                Detection(
-                    classIndex = bestC,
-                    className  = NudeNetClasses.NAMES.getOrElse(bestC) { "C$bestC" },
-                    score      = bestScore,
-                    box        = RectF(left, top, right, bottom),
-                )
-            )
-        }
-
-        // Per-class NMS
-        return nmsPerClass(perClassDet, IOU_THRESHOLD)
-    }
-
-    private fun nmsPerClass(input: List<Detection>, iou: Float): List<Detection> {
-        if (input.isEmpty()) return input
-        val byCls = input.groupBy { it.classIndex }
-        val kept = ArrayList<Detection>(input.size)
-        for ((_, group) in byCls) {
-            val sorted = group.sortedByDescending { it.score }.toMutableList()
-            while (sorted.isNotEmpty()) {
-                val best = sorted.removeAt(0)
-                kept.add(best)
-                val it = sorted.iterator()
-                while (it.hasNext()) {
-                    if (iouRect(best.box, it.next().box) > iou) it.remove()
-                }
-            }
-        }
-        return kept
-    }
-
-    private fun iouRect(a: RectF, b: RectF): Float {
-        val x1 = max(a.left, b.left)
-        val y1 = max(a.top, b.top)
-        val x2 = min(a.right, b.right)
-        val y2 = min(a.bottom, b.bottom)
-        val w = (x2 - x1).coerceAtLeast(0f)
-        val h = (y2 - y1).coerceAtLeast(0f)
-        val inter = w * h
-        val ua = (a.right - a.left) * (a.bottom - a.top)
-        val ub = (b.right - b.left) * (b.bottom - b.top)
-        val u = ua + ub - inter
-        return if (u <= 0f) 0f else inter / u
-    }
+    // decodeYolov8, nmsPerClass, and iouRect have been removed.
+    // All YOLOv8 post-processing is now handled by the native decodeAndNms() JNI
+    // function above, which runs entirely in C++ and returns only the final
+    // filtered detections — zero JVM allocation for the intermediate candidates.
+    @Suppress("unused") private fun _nmsMovedToNative() = Unit  // marker for git blame
 
     private fun aggregate(
         detections: List<Detection>,
