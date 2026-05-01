@@ -89,6 +89,7 @@ dependencies {
     // ── TensorFlow Lite ───────────────────────────────────────────────────────
     implementation("org.tensorflow:tensorflow-lite:2.14.0")
     implementation("org.tensorflow:tensorflow-lite-gpu:2.14.0")
+    implementation("org.tensorflow:tensorflow-lite-gpu-api:2.14.0")
     implementation("org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.4")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
     implementation("org.tensorflow:tensorflow-lite-metadata:0.4.4")
@@ -131,6 +132,12 @@ dependencies {
 
     // ── OkHttp (image fetching) ───────────────────────────────────────────────
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // ── MediaPipe Tasks (unified inference pipeline) ──────────────────────────
+    // Wraps GPU/NNAPI delegate management, async threading, and tensor buffering.
+    // Used by NudeNetDetector for ObjectDetector-style inference once the model
+    // is converted with baked-in NMS and TFLite metadata (see scripts/).
+    implementation("com.google.mediapipe:tasks-vision:0.10.14")
 
     // ── Coroutines ────────────────────────────────────────────────────────────
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")

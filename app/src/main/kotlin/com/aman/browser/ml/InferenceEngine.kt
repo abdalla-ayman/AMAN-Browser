@@ -104,7 +104,10 @@ class InferenceEngine private constructor(private val context: Context) {
                 val model = loadModel(MODEL_NUDENET)
                 val opts = Interpreter.Options().apply {
                     numThreads = 4
-                    if (useGpu && CompatibilityList().isDelegateSupportedOnThisDevice) {
+                    val gpuSupported = runCatching {
+                        useGpu && CompatibilityList().isDelegateSupportedOnThisDevice
+                    }.getOrDefault(false)
+                    if (gpuSupported) {
                         gpuDelegate = GpuDelegate()
                         addDelegate(gpuDelegate)
                     } else if (useNnapi) {
@@ -147,7 +150,7 @@ class InferenceEngine private constructor(private val context: Context) {
                 Log.i(TAG, "NudeNet TFLite fallback ready: in=${inShape.toList()} " +
                         "(CF=$inputChannelsFirst) out=${outShape.toList()} " +
                         "(attrFirst=$outputAttrFirst, A=$numAnchors)")
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 Log.e(TAG, "Failed to load NudeNet model", e)
                 destroyLocked()
             }
